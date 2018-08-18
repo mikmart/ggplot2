@@ -1,3 +1,4 @@
+#' @include position-.r
 #' Stack overlapping objects on top of each another
 #'
 #' `position_stack()` stacks bars on top of each other;
