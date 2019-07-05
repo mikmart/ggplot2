@@ -10,9 +10,12 @@ NULL
 #' # facet_null is the default faceting specification if you
 #' # don't override it with facet_grid or facet_wrap
 #' ggplot(mtcars, aes(mpg, wt)) + geom_point()
-facet_absolute <- function(shrink = TRUE) {
+facet_absolute <- function(shrink = TRUE, debug = FALSE) {
   ggproto(NULL, FacetAbsolute,
-    shrink = shrink
+    shrink = shrink,
+    params = list(
+      debug = debug
+    )
   )
 }
 
@@ -43,6 +46,9 @@ FacetAbsolute <- ggproto("FacetAbsolute", FacetNull,
       axis_v$left, panels[[1]],   axis_v$right,
       zeroGrob(),  axis_h$bottom, zeroGrob()
     ), ncol = 3, byrow = TRUE)
+
+    if (params$debug) browser()
+
     z_matrix <- matrix(c(5, 6, 4, 7, 1, 8, 3, 9, 2), ncol = 3, byrow = TRUE)
     grob_widths <- unit.c(grobWidth(axis_v$left), unit(1, "null"), grobWidth(axis_v$right))
     grob_heights <- unit.c(grobHeight(axis_h$top), unit(aspect_ratio, "null"), grobHeight(axis_h$bottom))
