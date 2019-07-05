@@ -1,4 +1,4 @@
-#' @include facet-.r
+#' @include facet-null.r
 NULL
 
 #' Facet specification: a single panel.
@@ -10,8 +10,8 @@ NULL
 #' # facet_null is the default faceting specification if you
 #' # don't override it with facet_grid or facet_wrap
 #' ggplot(mtcars, aes(mpg, wt)) + geom_point()
-facet_null <- function(shrink = TRUE) {
-  ggproto(NULL, FacetNull,
+facet_absolute <- function(shrink = TRUE) {
+  ggproto(NULL, FacetAbsolute,
     shrink = shrink
   )
 }
@@ -20,25 +20,9 @@ facet_null <- function(shrink = TRUE) {
 #' @format NULL
 #' @usage NULL
 #' @export
-FacetNull <- ggproto("FacetNull", Facet,
+FacetAbsolute <- ggproto("FacetAbsolute", FacetNull,
   shrink = TRUE,
 
-  compute_layout = function(data, params) {
-    layout_null()
-  },
-  map_data = function(data, layout, params) {
-    # Need the is.waive check for special case where no data, but aesthetics
-    # are mapped to vectors
-    if (is.waive(data))
-      return(new_data_frame(list(PANEL = factor())))
-
-    if (empty(data))
-      return(new_data_frame(c(data, list(PANEL = factor()))))
-
-    # Needs to be a factor to be consistent with other facet types
-    data$PANEL <- factor(1)
-    data
-  },
   draw_panels = function(panels, layout, x_scales, y_scales, ranges, coord, data, theme, params) {
 
     range <- ranges[[1]]
