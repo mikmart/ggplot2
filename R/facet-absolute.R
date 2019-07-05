@@ -10,10 +10,12 @@ NULL
 #' # facet_null is the default faceting specification if you
 #' # don't override it with facet_grid or facet_wrap
 #' ggplot(mtcars, aes(mpg, wt)) + geom_point()
-facet_absolute <- function(shrink = TRUE, debug = FALSE) {
+facet_absolute <- function(shrink = TRUE, y_size = unit(1, "null"), x_size = unit(1, "null"), debug = FALSE) {
   ggproto(NULL, FacetAbsolute,
     shrink = shrink,
     params = list(
+      x_size = x_size,
+      y_size = y_size,
       debug = debug
     )
   )
@@ -50,8 +52,9 @@ FacetAbsolute <- ggproto("FacetAbsolute", FacetNull,
     if (params$debug) browser()
 
     z_matrix <- matrix(c(5, 6, 4, 7, 1, 8, 3, 9, 2), ncol = 3, byrow = TRUE)
-    grob_widths <- unit.c(grobWidth(axis_v$left), unit(1, "null"), grobWidth(axis_v$right))
-    grob_heights <- unit.c(grobHeight(axis_h$top), unit(aspect_ratio, "null"), grobHeight(axis_h$bottom))
+    grob_widths <- unit.c(grobWidth(axis_v$left), params$x_size * diff(range$x.range), grobWidth(axis_v$right))
+    grob_heights <- unit.c(grobHeight(axis_h$top), params$y_size * diff(range$y.range), grobHeight(axis_h$bottom))
+
     grob_names <- c("spacer", "axis-l", "spacer", "axis-t", "panel", "axis-b", "spacer", "axis-r", "spacer")
     grob_clip <- c("off", "off", "off", "off", coord$clip, "off", "off", "off", "off")
 
